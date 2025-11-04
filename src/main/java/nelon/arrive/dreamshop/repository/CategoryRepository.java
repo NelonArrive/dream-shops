@@ -1,0 +1,10 @@
+package nelon.arrive.dreamshop.repository;
+
+import nelon.arrive.dreamshop.model.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+	Category findByName(String name);
+	
+	boolean existByName(String name);
+}
