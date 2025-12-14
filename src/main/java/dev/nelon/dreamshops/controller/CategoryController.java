@@ -4,7 +4,7 @@ import dev.nelon.dreamshops.exception.AlreadyExistException;
 import dev.nelon.dreamshops.exception.ResourceNotFoundException;
 import dev.nelon.dreamshops.model.Category;
 import dev.nelon.dreamshops.response.ApiResponse;
-import dev.nelon.dreamshops.service.category.CategoryService;
+import dev.nelon.dreamshops.service.category.ICategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("${api.prefix}/categories")
 public class CategoryController {
 	
-	private final CategoryService categoryService;
+	private final ICategoryService categoryService;
 	
 	@GetMapping("/all")
 	public ResponseEntity<ApiResponse> getAllCategories() {

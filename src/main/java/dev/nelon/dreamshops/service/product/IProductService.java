@@ -1,5 +1,6 @@
 package dev.nelon.dreamshops.service.product;
 
+import dev.nelon.dreamshops.dto.ProductDto;
 import dev.nelon.dreamshops.model.Product;
 import dev.nelon.dreamshops.request.AddProductRequest;
 import dev.nelon.dreamshops.request.ProductUpdateRequest;
@@ -18,4 +19,8 @@ public interface IProductService {
 	List<Product> getProductsByName(String name);
 	List<Product> getProductsByBrandAndName(String brand, String name);
 	Long countProductsByBrandAndName(String brand, String name);
+	
+	List<ProductDto> getConvertedProducts(List<Product> products);
+	
+	ProductDto convertToDto(Product product);
 }

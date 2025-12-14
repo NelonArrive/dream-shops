@@ -1,11 +1,11 @@
 package dev.nelon.dreamshops.controller;
 
-import lombok.RequiredArgsConstructor;
 import dev.nelon.dreamshops.dto.ImageDto;
 import dev.nelon.dreamshops.exception.ResourceNotFoundException;
 import dev.nelon.dreamshops.model.Image;
 import dev.nelon.dreamshops.response.ApiResponse;
 import dev.nelon.dreamshops.service.image.IImageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +24,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequestMapping("${api.prefix}/images")
 @RequiredArgsConstructor
 public class ImageController {
+	
 	private final IImageService imageService;
 	
 	@PostMapping("/upload")
@@ -32,12 +33,12 @@ public class ImageController {
 		@RequestParam Long productId
 	) {
 		try {
-			List<ImageDto> imageDtos = imageService.saveImages(files, productId);
-			return ResponseEntity.ok(new ApiResponse("Upload successful!", imageDtos));
+			List<ImageDto> imageDtos = imageService.saveImages(productId, files);
+			return ResponseEntity.ok(new ApiResponse("Upload success!", imageDtos));
 		} catch (Exception e) {
-			return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-				.body(new ApiResponse("Upload failed!", e.getMessage()));
+			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Upload failed!", e.getMessage()));
 		}
+		
 	}
 	
 	@GetMapping("/image/download/{imageId}")
@@ -45,16 +46,13 @@ public class ImageController {
 		@PathVariable Long imageId
 	) throws SQLException {
 		Image image = imageService.getImageById(imageId);
-		ByteArrayResource resource =
-			new ByteArrayResource(image.getImage().getBytes(1,
-				(int) image.getImage().length()));
-		return ResponseEntity.ok()
-			.contentType(MediaType.parseMediaType(image.getFileType()))
-			.header(HttpHeaders.CONTENT_DISPOSITION,
-				"attachment; filename=\"" + image.getFileName() + "\"").body(resource);
+		ByteArrayResource resource = new ByteArrayResource(image.getImage().getBytes(1, (int) image.getImage().length()));
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getFileType()))
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
+			.body(resource);
 	}
 	
-	@PutMapping("image/{imageId}/update")
+	@PutMapping("/image/{imageId}/update")
 	public ResponseEntity<ApiResponse> updateImage(
 		@PathVariable Long imageId,
 		@RequestBody MultipartFile file
@@ -66,14 +64,12 @@ public class ImageController {
 				return ResponseEntity.ok(new ApiResponse("Update success!", null));
 			}
 		} catch (ResourceNotFoundException e) {
-			return ResponseEntity.status(NOT_FOUND)
-				.body(new ApiResponse(e.getMessage(), null));
+			return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
 		}
-		return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-			.body(new ApiResponse("Update failed!", INTERNAL_SERVER_ERROR));
+		return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Update failed!", INTERNAL_SERVER_ERROR));
 	}
 	
-	@DeleteMapping("image/{imageId}/delete")
+	@DeleteMapping("/image/{imageId}/delete")
 	public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
 		try {
 			Image image = imageService.getImageById(imageId);
@@ -82,10 +78,8 @@ public class ImageController {
 				return ResponseEntity.ok(new ApiResponse("Delete success!", null));
 			}
 		} catch (ResourceNotFoundException e) {
-			return ResponseEntity.status(NOT_FOUND)
-				.body(new ApiResponse(e.getMessage(), null));
+			return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
 		}
-		return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-			.body(new ApiResponse("Delete failed!", INTERNAL_SERVER_ERROR));
+		return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Delete failed!", INTERNAL_SERVER_ERROR));
 	}
 }
