@@ -1,4 +1,51 @@
 package dev.nelon.dreamshops.service.cart;
 
+import dev.nelon.dreamshops.model.Cart;
+import dev.nelon.dreamshops.model.CartItem;
+import dev.nelon.dreamshops.model.Product;
+import dev.nelon.dreamshops.repository.CartItemRepository;
+import dev.nelon.dreamshops.repository.CartRepository;
+import dev.nelon.dreamshops.service.product.IProductService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
 public class CartItemService implements ICartItemService {
+	private final CartRepository cartRepository;
+	private final CartItemRepository cartItemRepository;
+	private final IProductService productService;
+	private final CartService cartService;
+	
+	@Override
+	public void addItemToCart(Long cartId, Long productId, int quantity) {
+		Cart cart = cartService.getCart(cartId);
+		Product product = productService.getProductById(productId);
+		CartItem cartItem = cart.getItems().stream()
+			.filter(item -> item.getProduct().getId().equals(productId))
+			.findFirst().orElse(new CartItem());
+		
+		if (cartItem.getId() == null) {
+			cartItem.setCart(cart);
+			cartItem.setProduct(product);
+			cartItem.setQuantity(quantity);
+			cartItem.setUnitPrice(product.getPrice());
+		} else {
+			cartItem.setQuantity(cartItem.getQuantity() + quantity);
+		}
+		cartItem.setTotalPrice();
+		cart.addItem(cartItem);
+		cartItemRepository.save(cartItem);
+		cartRepository.save(cart);
+	}
+	
+	@Override
+	public void removeItemFromCart(Long cartId, Long productId) {
+	
+	}
+	
+	@Override
+	public void updateItemQuantity(Long cartId, Long productId, int quantity) {
+	
+	}
 }
