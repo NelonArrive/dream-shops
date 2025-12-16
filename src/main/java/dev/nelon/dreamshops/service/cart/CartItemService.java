@@ -1,5 +1,6 @@
 package dev.nelon.dreamshops.service.cart;
 
+import dev.nelon.dreamshops.exception.ResourceNotFoundException;
 import dev.nelon.dreamshops.model.Cart;
 import dev.nelon.dreamshops.model.CartItem;
 import dev.nelon.dreamshops.model.Product;
@@ -8,6 +9,8 @@ import dev.nelon.dreamshops.repository.CartRepository;
 import dev.nelon.dreamshops.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +44,32 @@ public class CartItemService implements ICartItemService {
 	
 	@Override
 	public void removeItemFromCart(Long cartId, Long productId) {
-	
+		Cart cart = cartService.getCart(cartId);
+		CartItem cartItem = getCartItem(cartId, productId);
+		cart.removeItem(cartItem);
+		cartRepository.save(cart);
 	}
 	
 	@Override
 	public void updateItemQuantity(Long cartId, Long productId, int quantity) {
+		Cart cart = cartService.getCart(cartId);
+		cart.getItems().stream()
+			.filter(item -> item.getProduct().getId().equals(productId))
+			.findFirst().ifPresent(item -> {
+				item.setQuantity(quantity);
+				item.setUnitPrice(item.getProduct().getPrice());
+				item.setTotalPrice();
+			});
+		
+		BigDecimal totalAmount = cart.getTotalAmount();
+		cart.setTotalAmount(totalAmount);
+		cartRepository.save(cart);
+	}
 	
+	public CartItem getCartItem(Long cartId, Long productId) {
+		Cart cart = cartService.getCart(cartId);
+		return cart.getItems().stream()
+			.filter(item -> item.getProduct().getId().equals(productId))
+			.findFirst().orElseThrow(() -> new ResourceNotFoundException("Product not found in cart"));
 	}
 }
