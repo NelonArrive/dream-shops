@@ -9,6 +9,7 @@ import dev.nelon.dreamshops.repository.CartRepository;
 import dev.nelon.dreamshops.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -21,6 +22,7 @@ public class CartItemService implements ICartItemService {
 	private final CartService cartService;
 	
 	@Override
+	@Transactional
 	public void addItemToCart(Long cartId, Long productId, int quantity) {
 		Cart cart = cartService.getCart(cartId);
 		Product product = productService.getProductById(productId);
