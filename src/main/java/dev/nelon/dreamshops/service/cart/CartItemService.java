@@ -4,7 +4,6 @@ import dev.nelon.dreamshops.exception.ResourceNotFoundException;
 import dev.nelon.dreamshops.model.Cart;
 import dev.nelon.dreamshops.model.CartItem;
 import dev.nelon.dreamshops.model.Product;
-import dev.nelon.dreamshops.repository.CartItemRepository;
 import dev.nelon.dreamshops.repository.CartRepository;
 import dev.nelon.dreamshops.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CartItemService implements ICartItemService {
 	private final CartRepository cartRepository;
-	private final CartItemRepository cartItemRepository;
 	private final IProductService productService;
 	private final CartService cartService;
 	

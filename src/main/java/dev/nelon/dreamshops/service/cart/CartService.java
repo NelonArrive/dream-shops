@@ -28,6 +28,8 @@ public class CartService implements ICartService {
 		Cart cart = getCart(id);
 		cartItemRepository.deleteAllByCartId(id);
 		cart.getItems().clear();
+		cart.updateTotalAmount();
+		cartRepository.save(cart);
 	}
 	
 	@Override
