@@ -1,18 +1,21 @@
 package dev.nelon.dreamshops.service.user;
 
+import dev.nelon.dreamshops.dto.UserDto;
 import dev.nelon.dreamshops.exception.AlreadyExistException;
 import dev.nelon.dreamshops.exception.ResourceNotFoundException;
 import dev.nelon.dreamshops.model.User;
 import dev.nelon.dreamshops.repository.UserRepository;
-import dev.nelon.dreamshops.request.UserCreateRequest;
-import dev.nelon.dreamshops.request.UserUpdateRequest;
+import dev.nelon.dreamshops.request.CreateUserRequest;
+import dev.nelon.dreamshops.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
 	private final UserRepository userRepository;
+	private final ModelMapper modelMapper;
 	
 	@Override
 	public User getUserById(Long userId) {
@@ -21,7 +24,7 @@ public class UserService implements IUserService {
 	}
 	
 	@Override
-	public User createUser(UserCreateRequest request) {
+	public User createUser(CreateUserRequest request) {
 		if (userRepository.existsByEmail(request.getEmail())) {
 			throw new AlreadyExistException("Email already exists");
 		}
@@ -37,7 +40,7 @@ public class UserService implements IUserService {
 
 	
 	@Override
-	public User updateUser(UserUpdateRequest request, Long userId) {
+	public User updateUser(UpdateUserRequest request, Long userId) {
 		return userRepository.findById(userId).map(exisingUser -> {
 			exisingUser.setFirstName(request.getFirstName());
 			exisingUser.setLastName(request.getLastName());
@@ -50,5 +53,10 @@ public class UserService implements IUserService {
 		userRepository.findById(userId).ifPresentOrElse(userRepository::delete, () -> {
 			throw new ResourceNotFoundException("User not found!");
 		});
+	}
+	
+	@Override
+	public UserDto convertedToUserDto(User user) {
+		return modelMapper.map(user, UserDto.class);
 	}
 }
