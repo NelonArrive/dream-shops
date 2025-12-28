@@ -1,6 +1,7 @@
 package dev.nelon.dreamshops.service.cart;
 
 import dev.nelon.dreamshops.model.Cart;
+import dev.nelon.dreamshops.model.User;
 
 import java.math.BigDecimal;
 
@@ -11,7 +12,7 @@ public interface ICartService {
 	
 	BigDecimal getTotalPrice(Long id);
 	
-	Long initializeNewCart();
+	Cart initializeNewCart(User user);
 	
 	Cart getCartByUserId(Long userId);
 }
