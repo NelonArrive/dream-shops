@@ -4,8 +4,8 @@ import dev.nelon.dreamshops.dto.ProductDto;
 import dev.nelon.dreamshops.exception.AlreadyExistException;
 import dev.nelon.dreamshops.exception.ResourceNotFoundException;
 import dev.nelon.dreamshops.model.Product;
-import dev.nelon.dreamshops.request.AddProductRequest;
-import dev.nelon.dreamshops.request.ProductUpdateRequest;
+import dev.nelon.dreamshops.request.CreateProductRequest;
+import dev.nelon.dreamshops.request.UpdateProductRequest;
 import dev.nelon.dreamshops.response.ApiResponse;
 import dev.nelon.dreamshops.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class ProductController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/add")
-	public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
+	public ResponseEntity<ApiResponse> addProduct(@RequestBody CreateProductRequest product) {
 		try {
 			Product createdProduct = productService.addProduct(product);
 			ProductDto productDto = productService.convertToDto(createdProduct);
@@ -59,7 +59,7 @@ public class ProductController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/product/{productId}/update")
 	public ResponseEntity<ApiResponse> updateProduct(
-		@RequestBody ProductUpdateRequest product,
+		@RequestBody UpdateProductRequest product,
 		@PathVariable Long productId
 	) {
 		try {

@@ -2,7 +2,6 @@ package dev.nelon.dreamshops.security.config;
 
 import dev.nelon.dreamshops.security.jwt.AuthTokenFilter;
 import dev.nelon.dreamshops.security.jwt.JwtAuthEntryPoint;
-import dev.nelon.dreamshops.security.user.ShopUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +27,6 @@ import java.util.List;
 public class ShopConfig {
 	private static final List<String> SECURED_URLS =
 		List.of("/api/v1/carts/**", "/api/v1/cartItems/**");
-	private final ShopUserDetailsService userDetailsService;
 	private final JwtAuthEntryPoint authEntryPoint;
 	
 	@Bean
@@ -47,7 +45,9 @@ public class ShopConfig {
 	}
 	
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+	public AuthenticationManager authenticationManager(
+		AuthenticationConfiguration authConfig
+	) throws Exception {
 		return authConfig.getAuthenticationManager();
 	}
 	

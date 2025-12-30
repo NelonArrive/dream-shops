@@ -10,8 +10,8 @@ import dev.nelon.dreamshops.model.Product;
 import dev.nelon.dreamshops.repository.CategoryRepository;
 import dev.nelon.dreamshops.repository.ImageRepository;
 import dev.nelon.dreamshops.repository.ProductRepository;
-import dev.nelon.dreamshops.request.AddProductRequest;
-import dev.nelon.dreamshops.request.ProductUpdateRequest;
+import dev.nelon.dreamshops.request.CreateProductRequest;
+import dev.nelon.dreamshops.request.UpdateProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class ProductService implements IProductService {
 	private final ImageRepository imageRepository;
 	
 	@Override
-	public Product addProduct(AddProductRequest request) {
+	public Product addProduct(CreateProductRequest request) {
 		
 		if (productExists(request.getName(), request.getBrand())) {
 			throw new AlreadyExistException(request.getBrand() + " " + request.getName() + " already exists");
@@ -49,7 +49,7 @@ public class ProductService implements IProductService {
 		return productRepository.existsByNameAndBrand(name, brand);
 	}
 	
-	private Product createProduct(AddProductRequest request, Category category) {
+	private Product createProduct(CreateProductRequest request, Category category) {
 		return new Product(
 			request.getName(),
 			request.getBrand(),
@@ -76,7 +76,7 @@ public class ProductService implements IProductService {
 	}
 	
 	@Override
-	public Product updateProduct(ProductUpdateRequest request, Long productId) {
+	public Product updateProduct(UpdateProductRequest request, Long productId) {
 		return productRepository.findById(productId)
 			.map(existingProduct -> updateExistingProduct(existingProduct, request))
 			.map(productRepository::save)
@@ -85,7 +85,7 @@ public class ProductService implements IProductService {
 	
 	private Product updateExistingProduct(
 		Product existingProduct,
-		ProductUpdateRequest request
+		UpdateProductRequest request
 	) {
 		existingProduct.setName(request.getName());
 		existingProduct.setBrand(request.getBrand());

@@ -2,19 +2,19 @@ package dev.nelon.dreamshops.service.product;
 
 import dev.nelon.dreamshops.dto.ProductDto;
 import dev.nelon.dreamshops.model.Product;
-import dev.nelon.dreamshops.request.AddProductRequest;
-import dev.nelon.dreamshops.request.ProductUpdateRequest;
+import dev.nelon.dreamshops.request.CreateProductRequest;
+import dev.nelon.dreamshops.request.UpdateProductRequest;
 
 import java.util.List;
 
 public interface IProductService {
-	Product addProduct(AddProductRequest product);
+	Product addProduct(CreateProductRequest product);
 	
 	Product getProductById(Long id);
 	
 	void deleteProductById(Long id);
 	
-	Product updateProduct(ProductUpdateRequest product, Long productId);
+	Product updateProduct(UpdateProductRequest product, Long productId);
 	
 	List<Product> getAllProducts();
 	

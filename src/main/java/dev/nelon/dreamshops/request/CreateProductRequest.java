@@ -1,12 +1,12 @@
 package dev.nelon.dreamshops.request;
 
-import lombok.Data;
 import dev.nelon.dreamshops.model.Category;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
-public class ProductUpdateRequest {
+public class CreateProductRequest {
 	private Long id;
 	private String name;
 	private String brand;
