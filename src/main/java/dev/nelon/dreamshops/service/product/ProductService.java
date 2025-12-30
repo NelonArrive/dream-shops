@@ -2,6 +2,7 @@ package dev.nelon.dreamshops.service.product;
 
 import dev.nelon.dreamshops.dto.ImageDto;
 import dev.nelon.dreamshops.dto.ProductDto;
+import dev.nelon.dreamshops.exception.AlreadyExistException;
 import dev.nelon.dreamshops.exception.ProductNotFoundException;
 import dev.nelon.dreamshops.model.Category;
 import dev.nelon.dreamshops.model.Image;
@@ -28,6 +29,11 @@ public class ProductService implements IProductService {
 	
 	@Override
 	public Product addProduct(AddProductRequest request) {
+		
+		if (productExists(request.getName(), request.getBrand())) {
+			throw new AlreadyExistException(request.getBrand() + " " + request.getName() + " already exists");
+		}
+		
 		Category category = Optional
 			.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
 			.orElseGet(() -> {
@@ -37,6 +43,10 @@ public class ProductService implements IProductService {
 		
 		request.setCategory(category);
 		return productRepository.save(createProduct(request, category));
+	}
+	
+	private boolean productExists(String name, String brand) {
+		return productRepository.existsByNameAndBrand(name, brand);
 	}
 	
 	private Product createProduct(AddProductRequest request, Category category) {

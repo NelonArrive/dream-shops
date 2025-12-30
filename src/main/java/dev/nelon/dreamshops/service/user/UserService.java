@@ -7,8 +7,12 @@ import dev.nelon.dreamshops.model.User;
 import dev.nelon.dreamshops.repository.UserRepository;
 import dev.nelon.dreamshops.request.CreateUserRequest;
 import dev.nelon.dreamshops.request.UpdateUserRequest;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService {
 	private final UserRepository userRepository;
 	private final ModelMapper modelMapper;
+	private final PasswordEncoder passwordEncoder;
 	
 	@Override
 	public User getUserById(Long userId) {
@@ -31,13 +36,13 @@ public class UserService implements IUserService {
 		
 		User user = new User();
 		user.setEmail(request.getEmail());
-		user.setPassword(request.getPassword());
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
 		
 		return userRepository.save(user);
 	}
-
+	
 	
 	@Override
 	public User updateUser(UpdateUserRequest request, Long userId) {
@@ -59,4 +64,23 @@ public class UserService implements IUserService {
 	public UserDto convertedToUserDto(User user) {
 		return modelMapper.map(user, UserDto.class);
 	}
+	
+	@Override
+	public User getAuthenticatedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication == null ||
+			!authentication.isAuthenticated() ||
+			authentication.getPrincipal().equals("anonymousUser")) {
+			throw new JwtException("User is not authenticated");
+		}
+		
+		String email = authentication.getName();
+		
+		return userRepository.findByEmail(email)
+			.orElseThrow(() -> new ResourceNotFoundException(
+				"User not found with email: " + email
+			));
+	}
+	
 }
